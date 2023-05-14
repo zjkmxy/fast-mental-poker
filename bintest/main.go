@@ -14,7 +14,7 @@ const (
 
 func main() {
 	start := time.Now()
-	fmpEcc := fmp.NewEccMentalPoker(N)
+	fmpEcc := fmp.NewRistrettoMentalPoker(N)
 
 	// Step 1: A and B randomly hash cards into the curve
 	aList := fmpEcc.RollForInitCardList()

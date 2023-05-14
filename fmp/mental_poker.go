@@ -134,3 +134,15 @@ func NewEccMentalPoker(NCards int) *EccMentalPoker {
 		Schema: EccSchema,
 	}
 }
+
+type RistrettoMentalPoker = MentalPoker[EdScalar, EdPrivKey, EdCard, EdSchemaType]
+
+func NewRistrettoMentalPoker(NCards int) *RistrettoMentalPoker {
+	if NCards > 255 {
+		panic("Too many cards (>255)")
+	}
+	return &RistrettoMentalPoker{
+		NCards: NCards,
+		Schema: EdSchema,
+	}
+}
