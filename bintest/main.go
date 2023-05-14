@@ -14,6 +14,7 @@ const (
 
 func main() {
 	start := time.Now()
+	// fmpEcc := fmp.NewEccMentalPoker(N)
 	fmpEcc := fmp.NewRistrettoMentalPoker(N)
 
 	// Step 1: A and B randomly hash cards into the curve
@@ -24,9 +25,10 @@ func main() {
 	// Step 2.1 - Shuffle and encrypt (round A)
 	aPriv, aPub := fmpEcc.GenKey()
 	shuflA, roundA := fmpEcc.ShuffleEncrypt(cardList, aPriv)
+	aRand := fmp.RandomUint64(1 << K)
 	for k := 0; k < K; k++ {
 		xi, shufli, parami := fmpEcc.ShuffleVerifyCommit(roundA)
-		req := fmp.RandomUint64(2)
+		req := (aRand >> k) & 1
 		keyi, proofi := fmpEcc.ShuffleVerifyReveal(aPriv, shuflA, xi, shufli, int(req))
 		correct := fmpEcc.ShuffleVerifyCheck(cardList, roundA, parami, int(req), keyi, proofi)
 		if !correct {
@@ -37,9 +39,10 @@ func main() {
 	// Step 2.2 - Shuffle and encrypt (round B)
 	bPriv, bPub := fmpEcc.GenKey()
 	shuflB, roundB := fmpEcc.ShuffleEncrypt(roundA, bPriv)
+	bRand := fmp.RandomUint64(1 << K)
 	for k := 0; k < K; k++ {
 		xi, shufli, parami := fmpEcc.ShuffleVerifyCommit(roundB)
-		req := fmp.RandomUint64(2)
+		req := (bRand >> k) & 1
 		keyi, proofi := fmpEcc.ShuffleVerifyReveal(bPriv, shuflB, xi, shufli, int(req))
 		correct := fmpEcc.ShuffleVerifyCheck(roundA, roundB, parami, int(req), keyi, proofi)
 		if !correct {
@@ -70,7 +73,8 @@ func main() {
 		for j, v := range cardList {
 			if plainCard.Eq(v) {
 				flag = true
-				fmt.Print("A picked ", j, "\t")
+				// fmt.Print("A picked ", j, "\t")
+				j = j
 				break
 			}
 		}
@@ -94,7 +98,8 @@ func main() {
 		for j, v := range cardList {
 			if plainCard.Eq(v) {
 				flag = true
-				fmt.Print("B picked ", j, "\n")
+				// fmt.Print("B picked ", j, "\n")
+				j = j
 				break
 			}
 		}
